@@ -22,38 +22,41 @@ import java.util.List;
 import static io.jsonwebtoken.Jwts.*;
 
 public class JwtTokenValidator extends OncePerRequestFilter {
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String jwt=request.getHeader("Authorization");
+        String jwt = request.getHeader("Authorization");
 
-        if(jwt!=null){
-            jwt=jwt.substring(7);
+        if (jwt != null && jwt.startsWith("Bearer ")) {
+            jwt = jwt.substring(7); // Remove "Bearer " prefix
 
-            try{
-                SecretKey key= Keys.hmacShaKeyFor(JwtConstant.SECRETE_KEY.getBytes());
+            try {
+                SecretKey key = Keys.hmacShaKeyFor(JwtConstant.SECRETE_KEY.getBytes(StandardCharsets.UTF_8));
 
-                Claims claims= (Claims) Jwts.parser().setSigningKey(key).build().parseSignedClaims(jwt);
+                Claims claims = Jwts.parserBuilder()
+                        .setSigningKey(key)
+                        .build()
+                        .parseClaimsJws(jwt)
+                        .getBody();
 
-                String email=String.valueOf(claims.get("email"));
-                String authorities=String.valueOf(claims.get("authorities"));
+                String email = claims.getSubject(); // Assumes 'sub' claim holds the email
+                String authorities = String.valueOf(claims.get("authorities"));
 
-                List<GrantedAuthority>  authorityList= AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
+                List<GrantedAuthority> authorityList = AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
 
-                Authentication auth=new UsernamePasswordAuthenticationToken(
+                Authentication auth = new UsernamePasswordAuthenticationToken(
                         email,
-                        authorityList,
+                        null,
                         authorityList
-
                 );
+
                 SecurityContextHolder.getContext().setAuthentication(auth);
-            }
-            catch(Exception e){
-                throw new RuntimeException("Invalid Token");
+            } catch (Exception e) {
+                throw new RuntimeException("Invalid Token", e);
             }
         }
 
         filterChain.doFilter(request, response);
-
     }
 }
