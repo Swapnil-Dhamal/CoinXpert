@@ -30,6 +30,8 @@ public class Users {
 //    private String picture;
 
     @Embedded
-    private TwoFactorAuth twoFactorAuth=new TwoFactorAuth();
-    private USER_ROLE role=USER_ROLE.ROLE_CUSTOMER;
+    private TwoFactorAuth twoFactorAuth = new TwoFactorAuth();
+
+    @Enumerated(EnumType.STRING)
+    private USER_ROLE role = USER_ROLE.ROLE_CUSTOMER;
 }
