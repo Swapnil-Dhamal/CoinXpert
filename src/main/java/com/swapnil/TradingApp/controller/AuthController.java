@@ -8,6 +8,7 @@ import com.swapnil.TradingApp.response.AuthResponse;
 import com.swapnil.TradingApp.service.CustomUserDetailsService;
 import com.swapnil.TradingApp.service.MailService;
 import com.swapnil.TradingApp.service.TwoFactorOtpService;
+import com.swapnil.TradingApp.service.WatchlistService;
 import com.swapnil.TradingApp.utils.OtpUtils;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class AuthController {
     private final CustomUserDetailsService userDetailsService;
     private final TwoFactorOtpService twoFactorOtpService;
     private final MailService mailService;
+    private final WatchlistService watchlistService;
 
     @PostMapping("/signUp")
     public ResponseEntity<AuthResponse> signUp(@RequestBody Users users) throws Exception {
@@ -48,6 +50,8 @@ public class AuthController {
         newUser.setFullName(users.getFullName());
 
         Users savedUser=userRepo.save(newUser);
+
+        watchlistService.createWatchlist(savedUser);
 
         Authentication auth= new UsernamePasswordAuthenticationToken(
                 users.getEmail(),
@@ -122,6 +126,7 @@ public class AuthController {
     }
 
 
+    @PostMapping("/two-factor/otp/{otp}")
     public ResponseEntity<AuthResponse> verifySigningOtp(
             @PathVariable String otp,
             @RequestParam String id) {
