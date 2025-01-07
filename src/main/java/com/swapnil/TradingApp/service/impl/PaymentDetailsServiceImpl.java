@@ -27,14 +27,14 @@ public class PaymentDetailsServiceImpl implements PaymentDetailsService {
         paymentDetails.setAccountHolderName(accountHolderName);
         paymentDetails.setIfsc(ifsc);
         paymentDetails.setBankName(bankName);
-        paymentDetails.setUsers(user);
+        paymentDetails.setUser(user);
         return paymentDetailsRepo.save(paymentDetails);
     }
 
     @Override
     public PaymentDetails getUserPaymentDetails(Users user) {
 
-        return paymentDetailsRepo.findBuUserId(user.getId());
+        return paymentDetailsRepo.findByUser_Id(user.getId());
 
     }
 }

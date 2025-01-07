@@ -23,5 +23,5 @@ public class PaymentDetails {
 
     @OneToOne
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Users users;
+    private Users user;
 }

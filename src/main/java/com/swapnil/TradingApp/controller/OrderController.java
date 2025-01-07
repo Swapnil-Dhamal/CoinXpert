@@ -50,7 +50,7 @@ public class OrderController {
         Users user=userService.findUserProfileByJwt(jwt);
         Order order=orderService.getOrderById(orderId);
 
-        if(order.getUsers().getId().equals(user.getId())){
+        if(order.getUser().getId().equals(user.getId())){
             return ResponseEntity.ok(order);
         }
         else {

@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
+@Table(name = "orders")
 public class Order {
 
     @Id
@@ -17,7 +18,7 @@ public class Order {
     private Long id;
 
     @ManyToOne
-    private Users users;
+    private Users user;
 
     @Column(nullable = false)
     private OrderType orderType;

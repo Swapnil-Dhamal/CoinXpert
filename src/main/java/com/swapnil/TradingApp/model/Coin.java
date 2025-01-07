@@ -1,8 +1,11 @@
 package com.swapnil.TradingApp.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.swapnil.TradingApp.config.ROIDeserializer;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -84,9 +87,12 @@ public class Coin {
     @JsonProperty("atl_date")
     private LocalDateTime atlDate;
 
-    @JsonProperty("roi")
-    private Double roi;  // Nullable field
+    @JsonDeserialize(using = ROIDeserializer.class)
+    private Double roi;
 
     @JsonProperty("last_updated")
     private LocalDateTime lastUpdated;
+
+    @ManyToOne
+    private Users user;
 }

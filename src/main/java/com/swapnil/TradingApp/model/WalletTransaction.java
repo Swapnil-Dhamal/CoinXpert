@@ -18,6 +18,7 @@ public class WalletTransaction {
     @ManyToOne
     private Wallet wallet;
 
+    @Enumerated(EnumType.ORDINAL)
     private WalletTransactionType type;
 
     private LocalDate date;

@@ -14,7 +14,7 @@ public interface WatchlistService {
 
     Watchlist createWatchlist(Users users);
 
-    Optional<Watchlist> findById(Long id) throws Exception;
+    Optional<Watchlist> findById(String id) throws Exception;
 
-    Coin addItemToWatchlist(Coin coin, Users users);
+    boolean addItemToWatchlist(Coin coin, Users users);
 }

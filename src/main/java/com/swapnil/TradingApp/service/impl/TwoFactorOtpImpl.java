@@ -26,13 +26,13 @@ public class TwoFactorOtpImpl implements TwoFactorOtpService {
         twoFactorOtp.setOtp(otp);
         twoFactorOtp.setId(id);
         twoFactorOtp.setJwt(jwt);
-        twoFactorOtp.setUsers(users);
+        twoFactorOtp.setUser(users);
         return otpRepo.save(twoFactorOtp);
     }
 
     @Override
     public TwoFactorOtp findByUserId(Long userId) {
-        return otpRepo.findByUsers_Id(userId);
+        return otpRepo.findByUser_Id(userId);
     }
 
     @Override

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/coins")
+@RequestMapping("/api/coins")
 @RequiredArgsConstructor
 public class CoinController {
 
@@ -56,14 +56,14 @@ public class CoinController {
     @GetMapping("/top50")
     ResponseEntity<JsonNode> getTop50Coins() throws Exception {
 
-        String coin=coinService.getTpo50CoinsByMarketCap();
+        String coin=coinService.getTop50CoinsByMarketCap();
         JsonNode jsonNode=objectMapper.readTree(coin);
 
         return new ResponseEntity<>(jsonNode, HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("/trading")
-    ResponseEntity<JsonNode> tradingCoins() throws Exception {
+    @GetMapping("/trending")
+    ResponseEntity<JsonNode> trendingCoins() throws Exception {
 
         String coin=coinService.getTradingCoins();
         JsonNode jsonNode=objectMapper.readTree(coin);

@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface WatchlistRepo extends JpaRepository<Watchlist,Long> {
+public interface WatchlistRepo extends JpaRepository<Watchlist,String> {
 
-    Watchlist findUserWatchlist(Long userId);
+    Watchlist findByUser_id(Long userId);
 }

@@ -8,20 +8,21 @@ import com.swapnil.TradingApp.model.Coin;
 import com.swapnil.TradingApp.repo.CoinRepo;
 import com.swapnil.TradingApp.service.CoinService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class CoinServiceImpl implements CoinService {
 
@@ -56,25 +57,44 @@ public class CoinServiceImpl implements CoinService {
 
     @Override
     public String getMarketChart(String coinId, int days) throws Exception {
-        String url="https://api.coingecko.com/api/v3/coins/"+coinId+"markets?vs_currency=usd&days="+days;
+        // Base URL with placeholders for coinId and days
+        String url = "https://api.coingecko.com/api/v3/coins/{coinId}/market_chart?vs_currency=usd&days={days}";
 
-        RestTemplate restTemplate=new RestTemplate();
+        RestTemplate restTemplate = new RestTemplate();
 
         try {
+            // Create headers (if needed)
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON); // Ensure the request expects JSON
 
-            HttpHeaders headers=new HttpHeaders();
+            // Prepare HTTP entity (no body in GET request)
+            HttpEntity<String> entity = new HttpEntity<>(headers);
 
-            HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
+            // Use UriComponentsBuilder to set the values for coinId and days
+            UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(url)
+                    .buildAndExpand(coinId, days); // Replace placeholders with actual values
 
-            ResponseEntity<String> response=restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+            // Make the API request using the final URI string
+            ResponseEntity<String> response = restTemplate.exchange(
+                    uriComponents.toUriString(), // Convert UriComponents to URI String
+                    HttpMethod.GET,
+                    entity,
+                    String.class
+            );
 
+            // Return the response body (market chart data)
             return response.getBody();
 
-        }
-        catch(HttpClientErrorException | HttpServerErrorException e){
-            throw new Exception(e.getMessage());
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
+            // Handle HTTP errors
+            throw new Exception("Error response from CoinGecko API: " + e.getMessage(), e);
+        } catch (Exception e) {
+            // Handle other unexpected errors
+            throw new Exception("Unexpected error occurred while fetching market chart", e);
         }
     }
+
+
 
     @Override
     public String getCoinDetails(String coinId) throws Exception {
@@ -107,11 +127,11 @@ public class CoinServiceImpl implements CoinService {
             coin.setTotalVolume(marketData.get("total_volume").get("usd").asLong());
             coin.setHigh24h(marketData.get("high_24h").get("usd").asDouble());
             coin.setLow24h(marketData.get("low_24h").get("usd").asDouble());
-            coin.setPriceChange24h(marketData.get("price_change_24h").get("usd").asDouble());
-            coin.setPriceChangePercentage24h(marketData.get("price_change_24h").get("usd").asDouble());
+            coin.setPriceChange24h(marketData.get("price_change_24h").asDouble());
+            coin.setPriceChangePercentage24h(marketData.get("price_change_24h").asDouble());
             coin.setMarketCapChangePercentage24h(marketData.get("market_cap_change_percentage_24h").asLong());
             coin.setMarketCapChange24h(marketData.get("market_cap_change_24h").asLong());
-            coin.setTotalSupply(marketData.get("total_supply").get("usd").asLong());
+            coin.setTotalSupply(marketData.get("total_supply").asLong());
 
             coinRepo.save(coin);
             return response.getBody();
@@ -126,6 +146,9 @@ public class CoinServiceImpl implements CoinService {
     public Coin findById(String coinId) throws Exception {
 
         Optional<Coin> coin=coinRepo.findById(coinId);
+
+        System.out.println("request from watchlist for: "+coinId);
+        System.out.println("Coin : "+coin);
         if(coin.isEmpty()) throw new Exception("Coin not found");
         return coin.get();
     }
@@ -155,8 +178,8 @@ public class CoinServiceImpl implements CoinService {
         }
 
     @Override
-    public String getTpo50CoinsByMarketCap() throws Exception {
-        String url="https://api.coingecko.com/api/v3/coins/markets/vs_currency=usd&per_page=50&page=1";
+    public String getTop50CoinsByMarketCap() throws Exception {
+        String url="https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page=50&page=1";
 
         RestTemplate restTemplate=new RestTemplate();
 
@@ -178,7 +201,7 @@ public class CoinServiceImpl implements CoinService {
 
     @Override
     public String getTradingCoins() throws Exception {
-        String url="https://api.coingecko.com/api/v3/search/trading";
+        String url="https://api.coingecko.com/api/v3/search/trending";
 
         RestTemplate restTemplate=new RestTemplate();
 

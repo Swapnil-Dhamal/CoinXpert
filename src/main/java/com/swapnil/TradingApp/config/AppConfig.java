@@ -18,7 +18,7 @@ public class AppConfig {
                 .csrf(AbstractHttpConfigurer::disable)
         .sessionManagement(management->management
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(Authorize-> Authorize.requestMatchers("/api/auth/**").permitAll()
+                .authorizeHttpRequests(Authorize-> Authorize.requestMatchers("/api/**", "/error").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class)
                 .cors(cors->cors.configurationSource(corsConfigurationSource()));

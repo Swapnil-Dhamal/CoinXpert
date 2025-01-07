@@ -8,7 +8,9 @@ import org.springframework.stereotype.Repository;
 public interface AssetRepo extends JpaRepository<Asset, Long> {
 
 
-    Asset findByUserId(Long userId);
+    Asset findByUser_Id(Long userId);
 
-    Asset findByUserIdAndCoinId(Long userId, String coinId);
+    Asset findByUser_IdAndCoin_Id(Long userId, String coinId);
+
+    Asset findByUser_IdAndId(Long userId, Long assetId);
 }

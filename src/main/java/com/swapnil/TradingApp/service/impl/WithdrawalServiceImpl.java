@@ -25,7 +25,7 @@ public class WithdrawalServiceImpl implements WithdrawalService {
         Withdrawal withdrawal=new Withdrawal();
         withdrawal.setAmount(amount);
         withdrawal.setWithdrawalStatus(WithdrawalStatus.PENDING);
-        withdrawal.setUsers(users);
+        withdrawal.setUser(users);
         return withdrawalRepo.save(withdrawal);
     }
 
@@ -52,7 +52,7 @@ public class WithdrawalServiceImpl implements WithdrawalService {
 
     @Override
     public List<Withdrawal> getUsersWithdrawalHistory(Users users) {
-        return withdrawalRepo.findByUserId(users.getId());
+        return withdrawalRepo.findByUser_Id(users.getId());
     }
 
     @Override

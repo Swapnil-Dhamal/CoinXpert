@@ -9,6 +9,8 @@ import com.swapnil.TradingApp.service.WatchlistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,7 +23,7 @@ public class WatchlistServiceImpl implements WatchlistService {
     @Override
     public Watchlist findUserWatchlist(Long userId) throws Exception {
 
-        Watchlist watchlist=watchlistRepo.findUserWatchlist(userId);
+        Watchlist watchlist=watchlistRepo.findByUser_id(userId);
 
         if(watchlist== null){
             throw new Exception("Watchlist not found");
@@ -33,12 +35,13 @@ public class WatchlistServiceImpl implements WatchlistService {
     public Watchlist createWatchlist(Users users) {
 
         Watchlist watchlist=new Watchlist();
-        watchlist.setUsers(users);
+        watchlist.setUser(users);
+        watchlistRepo.save(watchlist);
         return watchlist;
     }
 
     @Override
-    public Optional<Watchlist> findById(Long id) throws Exception {
+    public Optional<Watchlist> findById(String id) throws Exception {
 
         Optional<Watchlist> optionalWatchlist=watchlistRepo.findById(id);
 
@@ -49,17 +52,26 @@ public class WatchlistServiceImpl implements WatchlistService {
     }
 
     @Override
-    public Coin addItemToWatchlist(Coin coin, Users users) {
+    public boolean addItemToWatchlist(Coin coin, Users users) {
 
-        Watchlist watchlist=watchlistRepo.findUserWatchlist(users.getId());
+        Watchlist watchlist=watchlistRepo.findByUser_id(users.getId());
 
-        if(watchlist.getCoin().contains(coin)){
-            watchlist.getCoin().remove(coin);
+        if(watchlist==null){
+            watchlist=new Watchlist();
+            watchlist.setUser(users);
+            watchlist.setCoin(new ArrayList<>());
+        }
+
+        List<Coin> coins=watchlist.getCoin();
+        if(coins.contains(coin)){
+            coins.remove(coin);
+            watchlistRepo.save(watchlist);
+            return false;
         }
         else{
-            watchlist.getCoin().add(coin);
+            coins.add(coin);
+            watchlistRepo.save(watchlist);
+            return true;
         }
-        watchlistRepo.save(watchlist);
-        return coin;
     }
 }

@@ -21,7 +21,7 @@ public class AssetServiceImpl implements AssetService {
     public Asset createAsset(Users users, Coin coin, double quantity) {
 
         Asset asset=new Asset();
-        asset.setUsers(users);
+        asset.setUser(users);
         asset.setCoin(coin);
         asset.setQuantity(quantity);
         asset.setBuyPrice(coin.getCurrentPrice());
@@ -38,12 +38,12 @@ public class AssetServiceImpl implements AssetService {
 
     @Override
     public Asset getAssetByUserIdAndId(Long userId, Long assetId) {
-        return assetRepo.findByUserIdAndAssetId(userId, assetId);
+        return assetRepo.findByUser_IdAndId(userId, assetId);
     }
 
     @Override
     public List<Asset> getUsersAssets(Long userID) {
-        return (List<Asset>) assetRepo.findByUserId(userID);
+        return (List<Asset>) assetRepo.findByUser_Id(userID);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class AssetServiceImpl implements AssetService {
 
     @Override
     public Asset findAssetByUserIDAndCoinId(Long userId, String coinId) {
-        return assetRepo.findByUserIdAndCoinId(userId, coinId);
+        return assetRepo.findByUser_IdAndCoin_Id(userId, coinId);
     }
 
     @Override

@@ -18,6 +18,7 @@ public class Asset {
 
     @ManyToOne
     private Coin coin;
+
     @ManyToOne
-    private Users users;
+    private Users user;
 }

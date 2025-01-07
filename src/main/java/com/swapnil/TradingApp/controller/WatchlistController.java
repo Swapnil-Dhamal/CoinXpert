@@ -46,9 +46,9 @@ public class WatchlistController {
 
     }
 
-    @GetMapping("/{watchlistId")
+    @GetMapping("/{watchlistId}")
     public ResponseEntity<Optional<Watchlist>> getWatchlistById(
-            @PathVariable Long watchlistId
+            @PathVariable String watchlistId
     ) throws Exception {
 
         Optional<Watchlist> watchlist=watchlistService.findById(watchlistId);
@@ -56,15 +56,18 @@ public class WatchlistController {
     }
 
     @PatchMapping("/add/coin/{coinId}")
-    public ResponseEntity<Coin> addItemToWatchlist(
+    public ResponseEntity<String> addItemToWatchlist(
             @RequestHeader("Authorization") String jwt,
             @PathVariable String coinId
     ) throws Exception {
 
         Users user=userService.findUserProfileByJwt(jwt);
         Coin coin=coinService.findById(coinId);
-        Coin addedCoin=watchlistService.addItemToWatchlist(coin, user);
-        return ResponseEntity.ok(addedCoin);
+
+        boolean isAdded=watchlistService.addItemToWatchlist(coin, user);
+
+        String message=isAdded ? "Coin is added to watchlist" : "Coin is removed from watchlist";
+        return ResponseEntity.ok(message);
     }
 
 }

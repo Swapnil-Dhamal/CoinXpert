@@ -46,7 +46,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         PaymentOrder paymentOrder=new PaymentOrder();
         paymentOrder.setAmount(amount);
-        paymentOrder.setUsers(user);
+        paymentOrder.setUser(user);
         paymentOrder.setPaymentMethod(paymentMethod);
         return paymentRepo.save(paymentOrder);
     }

@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PaymentDetailsRepo extends JpaRepository<PaymentDetails, Long> {
 
-    PaymentDetails findBuUserId(Long userId);
+    PaymentDetails findByUser_Id(Long userId);
 }

@@ -14,12 +14,13 @@ public class Withdrawal {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Enumerated(EnumType.ORDINAL)
     private WithdrawalStatus withdrawalStatus;
 
     private Long amount;
 
     @ManyToOne
-    private Users users;
+    private Users user;
 
     private LocalDateTime date=LocalDateTime.now();
 }

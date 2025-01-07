@@ -16,12 +16,14 @@ public class PaymentOrder {
 
     private Long amount;
 
+    @Enumerated(EnumType.ORDINAL)
     private PaymentOrderStatus paymentOrderStatus;
 
-    private PaymentOrder paymentOrder;
 
+
+    @Enumerated(EnumType.ORDINAL)
     private PaymentMethod paymentMethod;
 
     @ManyToOne
-    private Users users;
+    private Users user;
 }
