@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/withdrawal")
 @RequiredArgsConstructor
 public class WithdrawalController {
 
@@ -22,7 +21,7 @@ public class WithdrawalController {
     private final WalletService walletService;
     private final UserService userService;
 
-    @PostMapping("/{amount}")
+    @PostMapping("/api/withdrawal/{amount}")
     public ResponseEntity<?> withdrawalRequest(
             @RequestHeader("Authorization") String jwt,
             @PathVariable Long amount
@@ -62,7 +61,7 @@ public class WithdrawalController {
 
     }
 
-    @GetMapping("/api/withdrawal")
+    @GetMapping("/api/withdrawal/history")
     public ResponseEntity<List<Withdrawal>> getWithdrawalHistory(@RequestHeader("Authorization") String jwt){
 
         Users user=userService.findUserProfileByJwt(jwt);

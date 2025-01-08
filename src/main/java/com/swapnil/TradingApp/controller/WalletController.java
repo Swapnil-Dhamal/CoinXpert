@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @RestController
 @RequestMapping("/api/wallet")
 @RequiredArgsConstructor
@@ -27,7 +29,9 @@ public class WalletController {
 
         Users user=userService.findUserProfileByJwt(jwt);
 
+
         Wallet wallet=walletService.getUserWallet(user);
+        System.out.println("Wallet id: "+wallet.getId());
 
         return new ResponseEntity<>(wallet, HttpStatus.ACCEPTED);
 
@@ -47,26 +51,30 @@ public class WalletController {
         return new ResponseEntity<>(transfer, HttpStatus.ACCEPTED);
     }
 
-//    @PutMapping("/deposit")
-//    public ResponseEntity<Wallet> addBalanceToUserWallet(
-//            @RequestHeader("Authorization") String jwt,
-//            @RequestParam(name = "order_id") Long orderId,
-//            @RequestParam(name = "payment_id") String paymentId
-//    ) throws Exception {
-//
-//
-//        Users user=userService.findUserProfileByJwt(jwt);
-//        Wallet userWallet=walletService.getUserWallet(user);
-//        PaymentOrder paymentOrder=paymentService.getPaymentOrderById(orderId);
-//        boolean status= paymentService.proceedPaymentOrder(paymentOrder, paymentId);
-//
-//        if(status){
-//            userWallet=walletService.addBalance(userWallet, paymentOrder.getAmount());
-//        }
-//
-//        return new ResponseEntity<>(userWallet, HttpStatus.ACCEPTED);
-//
-//    }
+    @PutMapping("/deposit")
+    public ResponseEntity<Wallet> addBalanceToUserWallet(
+            @RequestHeader("Authorization") String jwt,
+            @RequestParam(name = "order_id") String orderId,
+            @RequestParam(name = "payment_id") String paymentId
+    ) throws Exception {
+
+
+        Users user=userService.findUserProfileByJwt(jwt);
+        Wallet userWallet=walletService.getUserWallet(user);
+        PaymentOrder paymentOrder=paymentService.getPaymentOrderById(orderId);
+        boolean status= paymentService.proceedPaymentOrder(paymentOrder, paymentId);
+
+        if(userWallet.getBalance()==null){
+            userWallet.setBalance(BigDecimal.valueOf(0));
+        }
+
+        if(status){
+            userWallet=walletService.addBalance(userWallet, paymentOrder.getAmount());
+        }
+
+        return new ResponseEntity<>(userWallet, HttpStatus.ACCEPTED);
+
+    }
 
 
 

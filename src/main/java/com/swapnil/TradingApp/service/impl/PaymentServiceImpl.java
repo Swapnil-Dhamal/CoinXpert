@@ -11,7 +11,6 @@ import com.swapnil.TradingApp.domain.PaymentMethod;
 import com.swapnil.TradingApp.domain.PaymentOrderStatus;
 import com.swapnil.TradingApp.model.PaymentOrder;
 import com.swapnil.TradingApp.model.Users;
-import com.swapnil.TradingApp.repo.PaymentDetailsRepo;
 import com.swapnil.TradingApp.repo.PaymentRepo;
 import com.swapnil.TradingApp.response.PaymentResponse;
 import com.swapnil.TradingApp.service.PaymentService;
@@ -21,8 +20,6 @@ import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import com.stripe.Stripe;
-import com.stripe.param.checkout.SessionCreateParams;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +49,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public PaymentOrder getPaymentOrderById(Long id) throws Exception {
+    public PaymentOrder getPaymentOrderById(String id) throws Exception {
         return paymentRepo.findById(id).orElseThrow(()->new Exception("Payment order not found"));
     }
 
@@ -60,6 +57,10 @@ public class PaymentServiceImpl implements PaymentService {
     public Boolean proceedPaymentOrder(PaymentOrder paymentOrder, String paymentId) throws RazorpayException {
 
 
+        if(paymentOrder.getPaymentOrderStatus()==null){
+            paymentOrder.setPaymentOrderStatus(PaymentOrderStatus.PENDING);
+
+        }
         if(paymentOrder.getPaymentOrderStatus().equals(PaymentOrderStatus.PENDING)){
 
             if(paymentOrder.getPaymentMethod().equals(PaymentMethod.RAZORPAY)){
@@ -90,9 +91,9 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public PaymentResponse createRazorpayPaymentLink(Users user, Long amount) throws RazorpayException {
+    public PaymentResponse createRazorpayPaymentLink(Users user, Long amount, String orderId) throws RazorpayException {
 
-        Long Amount=amount*100;    // conversion into cents
+       amount=amount*100;    // conversion into cents
 
         try{
             RazorpayClient razorpayClient=new RazorpayClient(apiKey, apiSecretKey);
@@ -104,7 +105,7 @@ public class PaymentServiceImpl implements PaymentService {
             JSONObject customer=new JSONObject();
             customer.put("name", user.getFullName());
             customer.put("email", user.getEmail());
-            paymentLinkRequest.put("cutomer", customer);
+            paymentLinkRequest.put("customer", customer);
 
             JSONObject notify=new JSONObject();
             notify.put("email", true);
@@ -112,7 +113,7 @@ public class PaymentServiceImpl implements PaymentService {
 
             paymentLinkRequest.put("reminder_enable", true);
 
-            paymentLinkRequest.put("callback_url","http://localhost:5173/wallet");
+            paymentLinkRequest.put("callback_url","http://localhost:5173/wallet="+orderId);
             paymentLinkRequest.put("callback_method", "get");
 
             PaymentLink payment=razorpayClient.paymentLink.create(paymentLinkRequest);

@@ -11,11 +11,11 @@ public interface PaymentService {
 
     PaymentOrder createOrder(Users user , Long amount, PaymentMethod paymentMethod);
 
-    PaymentOrder getPaymentOrderById(Long id) throws Exception;
+    PaymentOrder getPaymentOrderById(String id) throws Exception;
 
     Boolean proceedPaymentOrder(PaymentOrder paymentOrder, String paymentId) throws RazorpayException;
 
-    PaymentResponse createRazorpayPaymentLink(Users user, Long amount) throws RazorpayException;
+    PaymentResponse createRazorpayPaymentLink(Users user, Long amount, String orderId) throws RazorpayException;
 
     PaymentResponse createStripePaymentLink(Users user, Long amount, Long orderId) throws StripeException;
 }

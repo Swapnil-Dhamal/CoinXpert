@@ -6,13 +6,14 @@ import com.swapnil.TradingApp.domain.PaymentOrderStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 @Entity
 public class PaymentOrder {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String id;
+    private String id = UUID.randomUUID().toString();
 
     private Long amount;
 

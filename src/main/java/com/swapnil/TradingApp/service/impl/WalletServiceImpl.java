@@ -22,14 +22,16 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public Wallet getUserWallet(Users user) {
 
-        Wallet wallet=walletRepo.findUserById(user.getId());
+        Optional<Wallet> optionalWallet= Optional.ofNullable(walletRepo.findByUserId(user.getId()));
 
-        if(wallet == null){
-            wallet=new Wallet();
-            wallet.setUser(user);
-        }
+        Wallet wallet=optionalWallet.orElseGet(()->{
+            Wallet newWallet=new Wallet();
+            newWallet.setUser(user);
+            newWallet.setBalance(BigDecimal.ZERO);
+            return walletRepo.save(newWallet);
 
-        return  wallet;
+        });
+        return wallet;
     }
 
     @Override
@@ -45,7 +47,7 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public Wallet findWalletById(Long id) throws Exception {
 
-        Optional<Wallet> wallet= Optional.ofNullable(walletRepo.findUserById(id));
+        Optional<Wallet> wallet= Optional.ofNullable(walletRepo.findByUserId(id));
 
         if(wallet.isPresent()){
             return wallet.get();

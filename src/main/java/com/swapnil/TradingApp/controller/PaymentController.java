@@ -44,7 +44,7 @@ public class PaymentController {
         PaymentOrder paymentOrder=paymentService.createOrder(user, amount, paymentMethod);
 
         if(paymentMethod.equals(PaymentMethod.RAZORPAY)){
-            paymentResponse = paymentService.createRazorpayPaymentLink(user, amount);
+            paymentResponse = paymentService.createRazorpayPaymentLink(user, amount, paymentOrder.getId());
         }
         else{
             paymentResponse = paymentService.createStripePaymentLink(user, amount, Long.valueOf(paymentOrder.getId()));
@@ -53,27 +53,6 @@ public class PaymentController {
         return new ResponseEntity<>(paymentResponse, HttpStatus.CREATED);
     }
 
-    @PutMapping("/wallet/deposit")
-    public ResponseEntity<Wallet> addBalanceToWallet(
-            @RequestHeader("Authorization") String jwt,
-            @RequestParam(name = "order_id") Long orderId,
-            @RequestParam(name = "payment_id") String paymentId
-    ) throws Exception {
 
-        Users user=userService.findUserProfileByJwt(jwt);
-        Wallet wallet=walletService.getUserWallet(user);
-        PaymentOrder order=paymentService.getPaymentOrderById(orderId);
-
-        Boolean status = paymentService.proceedPaymentOrder(order, paymentId);
-
-        if(status){
-            wallet= walletService.addBalance(wallet, order.getAmount());
-        }
-
-        return  new ResponseEntity<>(wallet, HttpStatus.ACCEPTED);
-
-
-
-    }
 
 }
