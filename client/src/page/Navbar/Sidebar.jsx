@@ -10,6 +10,7 @@ import {
 } from '@radix-ui/react-icons';
 import { CreditCard as CreditCardIcon, Landmark, Wallet } from 'lucide-react';
 import { Link } from 'react-router-dom'; 
+import { SheetClose } from '@/components/ui/sheet';
 
 const menu = [
   { name: "Home", path: "/", icon: <HomeIcon className="h-6 w-6" /> },
@@ -29,12 +30,14 @@ const Sidebar = () => {
       {menu.map((item) => (
         <div key={item.name}>
           <Link to={item.path}> 
+          <SheetClose className='w-full'>
             <Button 
               variant="outline" 
               className="flex items-center gap-5 py-6 w-full">
               <span className="w-8">{item.icon}</span>
               <p>{item.name}</p>
             </Button>
+            </SheetClose>
           </Link>
         </div>
       ))}

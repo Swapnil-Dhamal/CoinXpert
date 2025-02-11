@@ -1,15 +1,17 @@
-
-import { Sidebar } from 'lucide-react'
 import './App.css'
-import { Navbar } from './page/Navbar/Navbar'
+import  Navbar  from './page/Navbar/Navbar';
+import Home from './page/Home/Home.jsx';
+
+
 
 function App() {
 
-  return (
+  return (  
     <>
     <Navbar/>
-    <Sidebar/>
+    <Home/>
     </>
+ 
   )
 }
 
