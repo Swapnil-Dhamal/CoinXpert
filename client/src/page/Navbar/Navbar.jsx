@@ -1,9 +1,9 @@
 import React from "react";
-import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { FaBars } from 'react-icons/fa';  
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import CryptoLogo from "../../page/images/logo.png";
-import { Spa } from "@mui/icons-material";
+import Sidebar from "./Sidebar.jsx";
 
 export const Navbar = () => {
   return (
@@ -37,6 +37,7 @@ export const Navbar = () => {
               </SheetTitle>
               
             </SheetHeader>
+            <Sidebar/>
           </SheetContent>
         </Sheet>
       </div>
