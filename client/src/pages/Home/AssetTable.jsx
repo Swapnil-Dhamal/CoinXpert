@@ -7,28 +7,39 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-  } from "@/components/ui/table"
-  
+} from "@/components/ui/table";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { BitcoinIcon } from "lucide-react";
 
 function AssetTable() {
   return (
     <Table className="mt-15">
-      <TableCaption>A list of your recent invoices.</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[100px]">Invoice</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Method</TableHead>
-          <TableHead className="text-right">Amount</TableHead>
+          <TableHead className="w-[100px]">Coin</TableHead>
+          <TableHead>Symbol</TableHead>
+          <TableHead>Volume</TableHead>
+          <TableHead>Market Cap</TableHead>
+          <TableHead>24h</TableHead>
+          <TableHead className="text-right">Price</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow>
-          <TableCell className="font-medium">INV001</TableCell>
-          <TableCell>Paid</TableCell>
-          <TableCell>Credit Card</TableCell>
-          <TableCell className="text-right">$250.00</TableCell>
-        </TableRow>
+        {[1,1,1,1,1,1,1,1,1,1].map((item, index) => <TableRow key={index}>
+          <TableCell className="font-medium flex items-center space-x-2">
+            <Avatar>
+              <AvatarImage src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="Bitcoin" />
+            </Avatar>
+            <span>Bitcoin</span>
+          </TableCell>
+
+          <TableCell>BTC</TableCell>
+          <TableCell>31267529035</TableCell>
+          <TableCell>1934047601349</TableCell>
+          <TableCell className="text-green-500">+0.76853%</TableCell>
+          <TableCell className="text-right">$97523</TableCell>
+        </TableRow> )}
+        
       </TableBody>
     </Table>
   );
