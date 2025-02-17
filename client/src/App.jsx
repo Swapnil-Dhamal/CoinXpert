@@ -14,14 +14,15 @@ import NotFound from "./pages/Not Found/NotFound";
 
 export default function App() {
   return (
-    <>
+    <Router>
       <Navbar />
 
       <Routes>
         <Route path="/" element={<Home/>} />
-        <Route path="/portfolio" element={<Portfolio/>} />
+         <Route path="/portfolio" element={<Portfolio/>} />
+        
         <Route path="/activity" element={<Activity/>} />
-        <Route path="/wallet" element={<Wallet/>} />
+        <Route path="/wallet" element ={<Wallet/>} />
         <Route path="/withdrawal" element={<Withdrawal/>} />
         <Route path="/payment-details" element={<PaymentDetails/>} />
         <Route path="/market/:id" element={<StockDetails/>} />
@@ -32,6 +33,7 @@ export default function App() {
 
 
       </Routes>
-    </>
+    
+    </Router>
   );
 }
