@@ -26,7 +26,7 @@ const Sidebar = () => {
   }, [location]);
 
   return (
-    <div className="mt-10 space-y-5">
+    <div className=" space-y-5 h-[80vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 p-2">
       {menu.map((item) => (
         <SheetClose asChild key={item.name}>
           <Button

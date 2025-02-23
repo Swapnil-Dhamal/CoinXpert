@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -63,9 +64,22 @@
 
 @layer base {
   * {
-    @apply border-gray-300;
+    @apply border-border;
   }
   body {
     @apply dark bg-background text-foreground;
+  }
+}
+
+
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }

@@ -16,9 +16,9 @@ import StockChart from "../Home/StockChart";
 
 const StockDetails = () => {
   return (
-    <div className="p-5 mt-5">
-      <div className="flex justify-between">
-        <div className="flex gap-5 items-center">
+    <div className="p-5">
+      <div className="flex justify-between ">
+        <div className="flex gap-5 items-center ">
           <div>
             <Avatar>
               <AvatarImage
@@ -44,7 +44,7 @@ const StockDetails = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 ">
           <Button>
             {true ? (
               <BookmarkFilledIcon className="h-6 w-6" />
@@ -66,8 +66,11 @@ const StockDetails = () => {
           </Dialog>
         </div>
       </div>
-
+      <div className="mt-5">
       <StockChart/>
+      </div>
+
+      
     </div>
   );
 };

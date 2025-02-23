@@ -11,10 +11,13 @@ import Watchlist from "./pages/Watchlist/Watchlist";
 import Profile from "./pages/Profile/Profile";
 import SearchCoin from "./pages/Search/SearchCoin";
 import NotFound from "./pages/Not Found/NotFound";
+import Auth from './pages/Auth/Auth';
 
 export default function App() {
   return (
-    <Router>
+    <>
+      <Auth/>
+      {false && <div>
       <Navbar />
 
       <Routes>
@@ -33,7 +36,9 @@ export default function App() {
 
 
       </Routes>
+
+      </div>}
     
-    </Router>
+    </>
   );
 }

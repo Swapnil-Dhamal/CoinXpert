@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { DialogClose } from "@/components/ui/dialog";
 
 // Define validation schema using Zod
 const formSchema = z.object({
@@ -102,7 +103,10 @@ const PaymentDetailsForm = () => {
           />
 
           {/* Submit Button */}
+          <DialogClose className="w-full">
           <Button className="w-full" type="submit">Submit</Button>
+
+          </DialogClose>
         </form>
       </Form>
     </div>

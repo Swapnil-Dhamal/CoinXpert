@@ -21,7 +21,7 @@ export const Navbar = () => {
       
       {/* Navbar with absolute positioning instead of fixed */}
       <div
-        className="w-full absolute top-0 left-0 border-b z-50 bg-background
+        className="w-full fixed top-0 left-0 border-b z-50 bg-background
         flex items-center justify-start p-3 h-16"
       >
         <div className="flex items-center gap-3">

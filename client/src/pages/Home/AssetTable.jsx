@@ -2,16 +2,17 @@ import React from "react";
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { BitcoinIcon } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function AssetTable() {
+  const navigate = useNavigate();
+
   return (
     <Table className="mt-15">
       <TableHeader>
@@ -25,21 +26,25 @@ function AssetTable() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {[1,1,1,1,1,1,1,1,1,1].map((item, index) => <TableRow key={index}>
-          <TableCell className="font-medium flex items-center space-x-2">
-            <Avatar>
-              <AvatarImage src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="Bitcoin" />
-            </Avatar>
-            <span>Bitcoin</span>
-          </TableCell>
-
-          <TableCell>BTC</TableCell>
-          <TableCell>31267529035</TableCell>
-          <TableCell>1934047601349</TableCell>
-          <TableCell className="text-green-500">+0.76853%</TableCell>
-          <TableCell className="text-right">$97523</TableCell>
-        </TableRow> )}
-        
+        {[1,1,1,1,1,1,1,1,1,1].map((item, index) => (
+          <TableRow 
+            key={index} 
+            onClick={() => navigate('/market/bitcoin')}
+            className=" transition"
+          >
+            <TableCell className="font-medium flex items-center space-x-2">
+              <Avatar>
+                <AvatarImage src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="Bitcoin" />
+              </Avatar>
+              <span>Bitcoin</span>
+            </TableCell>
+            <TableCell>BTC</TableCell>
+            <TableCell>31267529035</TableCell>
+            <TableCell>1934047601349</TableCell>
+            <TableCell className="text-green-500">+0.76853%</TableCell>
+            <TableCell className="text-right">$97523</TableCell>
+          </TableRow>
+        ))}
       </TableBody>
     </Table>
   );
