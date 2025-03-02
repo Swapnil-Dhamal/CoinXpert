@@ -4,12 +4,14 @@ import com.swapnil.TradingApp.domain.OrderType;
 import com.swapnil.TradingApp.model.Order;
 import com.swapnil.TradingApp.model.Users;
 import com.swapnil.TradingApp.model.Wallet;
+import com.swapnil.TradingApp.model.WalletTransaction;
 import com.swapnil.TradingApp.repo.WalletRepo;
 import com.swapnil.TradingApp.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -100,4 +102,16 @@ public class WalletServiceImpl implements WalletService {
         walletRepo.save(wallet);
         return wallet;
     }
+
+    @Override
+    public List<WalletTransaction> getWalletTransaction(Users user) throws Exception {
+
+        Wallet userWallet=user.getWallet();
+        if(userWallet==null){
+            throw new Exception("User wallet not found");
+        }
+        return walletRepo.findByWallet(userWallet);
+    }
+
+
 }
