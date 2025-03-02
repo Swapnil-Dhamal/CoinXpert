@@ -14,6 +14,7 @@ public class Wallet {
     private Long id;
 
     @OneToOne
+    @JoinColumn(name = "id")
     private Users user;
 
     private BigDecimal balance=BigDecimal.ZERO;
