@@ -2,6 +2,7 @@ package com.swapnil.TradingApp.service;
 
 import com.swapnil.TradingApp.domain.VerificationType;
 import com.swapnil.TradingApp.model.Users;
+import com.swapnil.TradingApp.model.WalletTransaction;
 import org.springframework.stereotype.Service;
 
 @Service
