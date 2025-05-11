@@ -2,75 +2,88 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { BookmarkFilledIcon } from "@radix-ui/react-icons";
 import { BookmarkIcon, DotIcon } from "lucide-react";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
 import TradingForm from "./TradingForm";
 import StockChart from "../Home/StockChart";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { fetchCoinDetails } from "@/State/Coin/Action";
 
 const StockDetails = () => {
+  const { coin, loading, error } = useSelector((state) => state);
+  const dispatch = useDispatch();
+  const { id } = useParams();
+  const jwt = localStorage.getItem("jwt");
+
+  console.log("ID:", id);
+
+  useEffect(() => {
+    if (id && jwt) {
+      dispatch(fetchCoinDetails(id, jwt));
+    }
+  }, [id, jwt, dispatch]);
+
+  if (loading) return <p className="text-center">Loading...</p>;
+  if (error) return <p className="text-center text-red-500">Error: {error}</p>;
+  if (!coin.coinDetails) return <p className="text-center">No data available</p>;
+
   return (
     <div className="p-5">
-      <div className="flex justify-between ">
-        <div className="flex gap-5 items-center ">
-          <div>
-            <Avatar>
-              <AvatarImage
-                src="https://cryptologos.cc/logos/bitcoin-btc-logo.png"
-                alt="Bitcoin"
-              />
-            </Avatar>
-          </div>
+      <div className="flex justify-between">
+        <div className="flex gap-5 items-center">
+          <Avatar>
+            <AvatarImage
+              src={coin.coinDetails?.image?.large || "/placeholder.png"}
+              alt={coin.coinDetails?.name || "Coin Image"}
+            />
+          </Avatar>
 
           <div>
             <div className="flex items-center gap-2">
-              <p>BTC</p>
+              <p className="uppercase">{coin.coinDetails?.symbol}</p>
               <DotIcon className="text-gray-400" />
-              <p className="text-gray-400">Bitcoin</p>
+              <p className="text-gray-400">{coin.coinDetails?.name}</p>
             </div>
             <div className="flex items-end gap-2">
-              <p className="text-xl font-bold">$50698</p>
-              <p className="text-red-600">
-                <span>-78436.935</span>
-                <span>(-0.5378%)</span>
+              <p className="text-xl font-bold">
+                ${coin.coinDetails?.market_data?.current_price?.usd || "N/A"}
+              </p>
+              <p className={coin.coinDetails?.market_data?.price_change_percentage_24h < 0 ? "text-red-600" : "text-green-600"}>
+                <span>{coin.coinDetails?.market_data?.price_change_24h?.toFixed(2) || "0.00"}</span>
+                <span>({coin.coinDetails?.market_data?.price_change_percentage_24h?.toFixed(2) || "0.00"}%)</span>
               </p>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-4 ">
+        <div className="flex items-center gap-4">
           <Button>
-            {true ? (
-              <BookmarkFilledIcon className="h-6 w-6" />
-            ) : (
-              <BookmarkIcon className="h-6 w-6" />
-            )}
+            {true ? <BookmarkFilledIcon className="h-6 w-6" /> : <BookmarkIcon className="h-6 w-6" />}
           </Button>
           <Dialog>
-            <DialogTrigger>
+            <DialogTrigger asChild>
               <Button size="lg">Trade</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Are you absolutely sure?</DialogTitle>
-                
+                <DialogTitle>Are you sure?</DialogTitle>
               </DialogHeader>
-              <TradingForm/>
+              <TradingForm />
             </DialogContent>
           </Dialog>
         </div>
       </div>
-      <div className="mt-5">
-      <StockChart/>
-      </div>
 
-      
+      <div className="mt-5">
+        <StockChart coinId={id}/>
+      </div>
     </div>
   );
 };

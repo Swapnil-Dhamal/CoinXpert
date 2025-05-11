@@ -4,6 +4,9 @@ import { HomeIcon, DashboardIcon, BookmarkIcon, ActivityLogIcon, PersonIcon, Exi
 import { CreditCard as CreditCardIcon, Landmark, Wallet } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { SheetClose } from "@/components/ui/sheet";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../State/Auth/Action" // Adjust path if needed
+
 
 const menu = [
   { name: "Home", path: "/", icon: <HomeIcon className="h-6 w-6" /> },
@@ -20,6 +23,11 @@ const menu = [
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch=useDispatch();
+
+  const handleLogout=()=>{
+    dispatch(logout());
+  }
 
   useEffect(() => {
     console.log("Current path:", location.pathname);
@@ -35,6 +43,9 @@ const Sidebar = () => {
             onClick={() => {
               console.log(`Navigating to: ${item.path}`);
               navigate(item.path);
+              if(item.name=="Logout"){
+                handleLogout();
+              }
             }}
           >
             <span className="w-8">{item.icon}</span>

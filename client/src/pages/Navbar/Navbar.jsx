@@ -12,8 +12,13 @@ import CryptoLogo from "../../pages/images/logo.png";
 import Sidebar from "./Sidebar.jsx";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
+import { useSelector } from "react-redux";
 
 export const Navbar = () => {
+
+  const {auth}= useSelector(store=>store);
+  console.log(auth.user.fullName);
+
   return (
     <>
       {/* Add a spacer div to push content down */}
@@ -68,7 +73,9 @@ export const Navbar = () => {
 
         <div className="ml-auto">
           <Avatar className="w-10 h-10 flex items-center justify-center bg-gray-200 rounded-full">
-            <AvatarFallback className="text-lg font-bold">C</AvatarFallback>
+            <AvatarFallback className="text-2xl font-bold text-orange-600">
+            {auth.user ? auth.user.fullName?.charAt(0).toUpperCase() : "?"}
+            </AvatarFallback>
           </Avatar>
         </div>
       </div>

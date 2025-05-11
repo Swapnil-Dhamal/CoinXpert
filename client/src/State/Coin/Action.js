@@ -36,7 +36,13 @@ export const getTop50Coins=()=>async(dispatch)=>{
 
 
     try{
-        const response=await axios.get(`${API_BASE_URL}/api/coins/top50`);
+        const jwt = localStorage.getItem("jwt");
+
+        const response=await api.get(`/api/coins/top50`, {
+            headers: {
+                Authorization: `Bearer ${jwt}`,
+            },
+        });
         console.log("Top 50 coins : ", response.data);
 
         dispatch({type:FETCH_TOP_50_COINS_SUCCESS, payload:response.data });
@@ -48,13 +54,17 @@ export const getTop50Coins=()=>async(dispatch)=>{
     }
 }
 
-export const getMarketChart=(coinId, days)=>async(dispatch)=>{
+export const getMarketChart=(coinId, days, jwt)=>async(dispatch)=>{
 
     dispatch({type:FETCH_MARKET_CHART_REQUEST})
 
 
     try{
-        const response=await axios.get(`${API_BASE_URL}/api/coins/${coinId}/chart?days=${days}`);
+        const response=await api.get(`/api/coins/${coinId}/chart?days=${days}`,{
+            headers: {
+                Authorization: `Bearer ${jwt}`,
+            },
+        });
         console.log("Market chart : ", response.data);
 
         dispatch({type:FETCH_MARKET_CHART_SUCCESS, payload:response.data });
@@ -66,14 +76,21 @@ export const getMarketChart=(coinId, days)=>async(dispatch)=>{
     }
 }
 
-export const fetchCoinDetails=(coinId)=>async(dispatch)=>{
+export const fetchCoinDetails=(coinId, jwt)=>async(dispatch)=>{
 
     dispatch({type:FETCH_COIN_DETAILS_REQUEST})
 
 
+    console.log("Coin ID : ", coinId);
     try{
-        const response=await axios.get(`${API_BASE_URL}/api/coins/details/${coinId}`);
-        console.log("Coin : ", response.data);
+
+
+        const response=await api.get(`/api/coins/details/${coinId}`, {
+            headers: {
+                Authorization:jwt? `Bearer ${jwt}`:"",
+            },
+        });
+        console.log("Coin data : ", response.data);
 
         dispatch({type:FETCH_COIN_DETAILS_SUCCESS, payload:response.data });
 

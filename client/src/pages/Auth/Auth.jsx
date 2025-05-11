@@ -8,6 +8,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import CryptoLogo from "../../pages/images/logo.png";
 import bgImage from "../../pages/images/bg.png";
+import { useDispatch } from "react-redux";
 
 const Auth = () => {
   const navigate = useNavigate();

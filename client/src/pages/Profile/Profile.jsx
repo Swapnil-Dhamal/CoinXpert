@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { VerifiedIcon } from "lucide-react";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import {
   Dialog,
   DialogTrigger,
@@ -13,6 +14,7 @@ import AccountVerificationForm from "./AccountVerificationForm";
 
 const Profile = () => {
   const [isTwoStepEnabled, setIsTwoStepEnabled] = useState(false);
+  const {auth} = useSelector(store=>store);
 
   const handleEnableTwoStepVerification = () => {
     console.log("Two-step verification enabled");
@@ -31,8 +33,8 @@ const Profile = () => {
             <div className="lg:flex gap-32">
               <div className="space-y-7">
                 {[
-                  { label: "Email", value: "swapnil@gmail.com" },
-                  { label: "Full Name", value: "Swapnil Dhamal" },
+                  { label: "Email", value: auth.user?.email },
+                  { label: "Full Name", value: auth.user?.fullName },
                   { label: "Date of Birth", value: "02/12/2004" },
                   { label: "Nationality", value: "Indian" },
                 ].map((item, index) => (

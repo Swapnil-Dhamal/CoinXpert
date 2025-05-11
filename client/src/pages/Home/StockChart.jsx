@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactApexChart from "react-apexcharts";
 import { Button } from '@/components/ui/button';
+import { useDispatch, useSelector } from 'react-redux';
+import { getMarketChart } from '@/State/Coin/Action';
 
 const timeSeries=[
     {
@@ -11,77 +13,33 @@ const timeSeries=[
     },
     {
         keyword:"DIGITAL_CURRENCY_DAILY",
-        key:"Time Series(Daily)",
+        key:"Time Series(Weekly)",
         label:"1 Week",
         value:7
     },
     {
         keyword:"DIGITAL_CURRENCY_DAILY",
-        key:"Time Series(Daily)",
+        key:"Time Series(Monthly)",
         label:"1 Month",
         value:30
+    },
+    {
+        keyword:"DIGITAL_CURRENCY_DAILY",
+        key:"Time Series(Yearly)",
+        label:"1 Year",
+        value:365
     }
 ]
-const StockChart=()=>{
+const StockChart=({coinId})=>{
 
-    const [activeLabel, setActiveLabel]=useState("1 Day");
+    const dispatch=useDispatch();
+    const {coin}=useSelector(store=>store)
+
+    const [activeLabel, setActiveLabel]=useState(timeSeries[0]);
 
     const series=[
         {
-            data:[
-            [
-                1737014623013,
-                99739.74868905671
-                ],
-                [
-                1737018218351,
-                98969.27851480305
-                ],
-                [
-                1737021744345,
-                99119.30544691836
-                ],
-                [
-                1737025358884,
-                99175.81276396391
-                ],
-                [
-                1737029016027,
-                99136.88555434979
-                ],
-                [
-                1737032636181,
-                99365.30032161868
-                ],
-                [
-                1737036228635,
-                99020.76827900368
-                ],
-                [
-                1737039785125,
-                97532.25346033007
-                ],
-                [
-                1737043418453,
-                99184.80509513128
-                ],
-                [
-                1737047194563,
-                99454.01193663836
-                ],
-                [
-                1737050487857,
-                99946.48723935365
-                ],
-                [
-                1737054221908,
-                99556.10838859396
-                ],
-                [
-                1737057689439,
-                100377.75137459932
-                ]
-            ]
+            data:coin.marketChart.data,
         }
     ];
 
@@ -133,12 +91,20 @@ const StockChart=()=>{
         setActiveLabel(value);
     }
 
+    useEffect(() => {
+        const jwtToken = localStorage.getItem("jwt"); 
+        if (!coinId || !jwtToken) return; // Prevent API call if values are missing
+        
+        dispatch(getMarketChart(coinId, activeLabel.value, jwtToken));
+    }, [dispatch, coinId, activeLabel]);
+    
+
     return(
         <div>
             <div className='space-x-3'>
                 {timeSeries.map((item) => <Button 
-                variant={activeLabel==item.label?"":"outline"}
-                onClick={()=> handleActiveLabel(item.label)}
+                variant={activeLabel.label==item.label?"":"outline"}
+                onClick={()=> handleActiveLabel(item)}
                 key={item.label}>
                     {item.label}
                 </Button>)}
