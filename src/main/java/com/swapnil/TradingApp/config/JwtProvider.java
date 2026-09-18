@@ -12,7 +12,7 @@ import java.util.*;
 
 public class JwtProvider {
 
-    public static SecretKey key= Keys.hmacShaKeyFor(JwtConstant.SECRETE_KEY.getBytes(StandardCharsets.UTF_8));
+    public static SecretKey key= Keys.hmacShaKeyFor(JwtConstant.SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 
     public static String generatedToken(Authentication auth){
 
@@ -20,6 +20,7 @@ public class JwtProvider {
         String roles=populateAuthorities(authorities);
 
         String jwt= Jwts.builder()
+                .setSubject(auth.getName())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime()+86400000))
                 .claim("email", auth.getName())
@@ -48,8 +49,15 @@ public class JwtProvider {
         Set<String > auth=new HashSet<>();
 
         for(GrantedAuthority ga:authorities){
-            auth.add(ga.getAuthority());
+            String role=ga.getAuthority();
+            if(!role.startsWith("ROLE_")){
+                role="ROLE_"+role;
+            }
+            auth.add(role);
         }
         return String.join(",", auth);
     }
+
+
+
 }

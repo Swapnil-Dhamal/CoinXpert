@@ -61,6 +61,8 @@ public class WatchlistController {
             @PathVariable String coinId
     ) throws Exception {
 
+        System.out.println("Request to add coin to watchlist: "+coinId);
+
         Users user=userService.findUserProfileByJwt(jwt);
         Coin coin=coinService.findById(coinId);
 

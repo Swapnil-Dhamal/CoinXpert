@@ -25,6 +25,7 @@ public class PaymentDetailsController {
             @RequestHeader("Authorization") String jwt
     )
     {
+        System.out.println("Payment details: "+ paymentDetails);
         Users users=userService.findUserProfileByJwt(jwt);
 
         PaymentDetails paymentDetails1=paymentDetailsService.addUserDetails(

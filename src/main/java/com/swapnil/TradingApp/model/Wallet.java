@@ -1,5 +1,6 @@
 package com.swapnil.TradingApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,7 +15,8 @@ public class Wallet {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "id")
+    @JsonIgnore
+    @JoinColumn(name = "user_id")
     private Users user;
 
     private BigDecimal balance=BigDecimal.ZERO;

@@ -1,16 +1,19 @@
 package com.swapnil.TradingApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.swapnil.TradingApp.domain.USER_ROLE;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude = {"wallet", "twoFactorAuth"})
 @Table(name = "users")
 public class Users {
 
@@ -21,6 +24,7 @@ public class Users {
 
     private String fullName;
     private String email;
+
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;

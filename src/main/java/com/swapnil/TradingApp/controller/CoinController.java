@@ -19,9 +19,10 @@ public class CoinController {
     private final ObjectMapper objectMapper;
     private final CoinService coinService;
 
-    @GetMapping
+    @GetMapping("/coinList")
     ResponseEntity<List<Coin>> getCoinList(@RequestParam("page") int page) throws Exception {
 
+        System.out.println("Page : "+page);
         List<Coin> coinList=coinService.getCoinList(page);
         return new ResponseEntity<>(coinList, HttpStatus.ACCEPTED);
     }
@@ -38,10 +39,21 @@ public class CoinController {
     @GetMapping("/details/{coinId}")
     ResponseEntity<JsonNode> getCoinDetails(@PathVariable("coinId") String coinId) throws Exception {
 
+
+        System.out.println("Coin ID : "  + coinId);
         String coinDetail=coinService.getCoinDetails(coinId);
         JsonNode jsonNode=objectMapper.readTree(coinDetail);
 
         return new ResponseEntity<>(jsonNode, HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/{coinId}")
+    ResponseEntity<JsonNode> getCoinById(@PathVariable String coinId) throws Exception {
+
+        String coin= String.valueOf(coinService.findById(coinId));
+        JsonNode jsonNode=objectMapper.readTree(coin);
+
+        return new ResponseEntity<>(jsonNode, HttpStatus.FOUND);
     }
 
     @GetMapping("/search")

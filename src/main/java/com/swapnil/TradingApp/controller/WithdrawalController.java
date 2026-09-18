@@ -25,13 +25,15 @@ public class WithdrawalController {
     public ResponseEntity<?> withdrawalRequest(
             @RequestHeader("Authorization") String jwt,
             @PathVariable Long amount
-    )
-    {
+    ) throws Exception {
+
+        System.out.println("AMount to be withdraw:"+amount);
         Users user = userService.findUserProfileByJwt(jwt);
         Wallet userWallet=walletService.getUserWallet(user);
 
         Withdrawal withdrawal=withdrawalService.requestWithdrawal(amount, user);
 
+        System.out.println("Withdrawal:----------------------"+withdrawal);
         walletService.addBalance(userWallet, -withdrawal.getAmount());
 
         return new ResponseEntity<>(withdrawal, HttpStatus.OK);
@@ -68,6 +70,7 @@ public class WithdrawalController {
 
         List<Withdrawal> withdrawalList=withdrawalService.getUsersWithdrawalHistory(user);
 
+        System.out.println("Withdrawal list: "+withdrawalList);
         return new ResponseEntity<>(withdrawalList, HttpStatus.OK);
     }
 

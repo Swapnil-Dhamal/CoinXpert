@@ -23,4 +23,6 @@ public interface WalletService {
 
 
     List<WalletTransaction> getWalletTransaction(Users user) throws Exception;
+
+    Wallet withdrawBalanceRequest(Wallet userWallet, Long amount, Users user) throws Exception;
 }

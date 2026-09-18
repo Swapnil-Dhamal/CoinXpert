@@ -113,7 +113,7 @@ public class PaymentServiceImpl implements PaymentService {
 
             paymentLinkRequest.put("reminder_enable", true);
 
-            paymentLinkRequest.put("callback_url","http://localhost:5173/wallet="+orderId);
+            paymentLinkRequest.put("callback_url","http://localhost:5173/wallet?orderId="+orderId);
             paymentLinkRequest.put("callback_method", "get");
 
             PaymentLink payment=razorpayClient.paymentLink.create(paymentLinkRequest);

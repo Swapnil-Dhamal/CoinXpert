@@ -4,6 +4,7 @@ import com.swapnil.TradingApp.model.Users;
 import com.swapnil.TradingApp.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -31,6 +32,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
 
         List<GrantedAuthority> authorityList = new ArrayList<>();
+        authorityList.add(new SimpleGrantedAuthority(user.getRole().name()));
         return new User(user.getEmail(), user.getPassword(), authorityList);
     }
 

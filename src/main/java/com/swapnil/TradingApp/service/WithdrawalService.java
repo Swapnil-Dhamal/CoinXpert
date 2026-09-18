@@ -9,7 +9,7 @@ import java.util.List;
 @Service
 public interface WithdrawalService {
 
-    Withdrawal requestWithdrawal(Long amount , Users users);
+    Withdrawal requestWithdrawal(Long amount , Users users) throws Exception;
 
     Withdrawal proceedWithdrawal(Long withdrawalId, boolean accept) throws Exception;
 

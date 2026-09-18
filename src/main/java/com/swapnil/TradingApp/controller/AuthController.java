@@ -4,6 +4,7 @@ import com.swapnil.TradingApp.config.JwtProvider;
 import com.swapnil.TradingApp.model.TwoFactorOtp;
 import com.swapnil.TradingApp.model.Users;
 import com.swapnil.TradingApp.repo.UserRepo;
+import com.swapnil.TradingApp.request.LoginRequest;
 import com.swapnil.TradingApp.response.AuthResponse;
 import com.swapnil.TradingApp.service.CustomUserDetailsService;
 import com.swapnil.TradingApp.service.MailService;
@@ -14,6 +15,7 @@ import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,6 +23,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,19 +38,23 @@ public class AuthController {
     private final TwoFactorOtpService twoFactorOtpService;
     private final MailService mailService;
     private final WatchlistService watchlistService;
+    private final PasswordEncoder passwordEncoder;
+
 
     @PostMapping("/signUp")
     public ResponseEntity<AuthResponse> signUp(@RequestBody Users users) throws Exception {
 
         Users isEmailExists=userRepo.findByEmail(users.getEmail());
 
-        if(isEmailExists != null){
+        if(isEmailExists!=null){
             throw new Exception("Email already exists");
         }
 
+        System.out.println("Sing up request: "+ users);
+
         Users newUser=new Users();
         newUser.setEmail(users.getEmail());
-        newUser.setPassword(users.getPassword());
+        newUser.setPassword(passwordEncoder.encode(users.getPassword()));
         newUser.setFullName(users.getFullName());
 
         Users savedUser=userRepo.save(newUser);
@@ -71,10 +79,10 @@ public class AuthController {
     }
 
     @PostMapping("/signIn")
-    public ResponseEntity<AuthResponse> signIn(@RequestBody Users user) throws MessagingException {
+    public ResponseEntity<AuthResponse> signIn(@RequestBody LoginRequest loginRequest) throws MessagingException {
 
-        String userName=user.getEmail();
-        String password=user.getPassword();
+        String userName=loginRequest.getEmail();
+        String password=loginRequest.getPassword();
 
         Authentication auth=authenticate(userName, password);
 
@@ -84,7 +92,7 @@ public class AuthController {
 
         Users authUser=userRepo.findByEmail(userName);
 
-        if(user.getTwoFactorAuth().isEnabled()){
+        if(authUser.getTwoFactorAuth().isEnabled()){
             AuthResponse res=new AuthResponse();
             res.setMessage("Two factor auth is enable");
             res.setStatus(true);
@@ -110,17 +118,25 @@ public class AuthController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    private Authentication authenticate(String userName, String password){
+    private Authentication authenticate(String userName, String password) {
+        System.out.println("Authenticating the user-------");
 
-        UserDetails userDetails= userDetailsService.loadUserByUsername(userName);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
 
-        if(userDetails == null){
+        System.out.println("Username: " + userName);
+        System.out.println("Raw password: " + password);
+        System.out.println("Encoded password: " + userDetails.getPassword());
+
+        if (userDetails == null) {
             throw new BadCredentialsException("Invalid Username");
         }
-        if(!password.equals(userDetails.getPassword())){
-            throw new BadCredentialsException("Invalid Password");
 
+        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+            throw new BadCredentialsException("Invalid Password");
         }
+
+
+
 
         return new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
     }

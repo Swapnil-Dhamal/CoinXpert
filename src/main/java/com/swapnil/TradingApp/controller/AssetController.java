@@ -44,6 +44,8 @@ public class AssetController {
             @RequestHeader("Authorization") String jwt
     )
     {
+
+        System.out.println("request for user asset---------------------");
         Users users=userService.findUserProfileByJwt(jwt);
         List<Asset> assetList=assetService.getUsersAssets(users.getId());
         return ResponseEntity.ok().body(assetList);

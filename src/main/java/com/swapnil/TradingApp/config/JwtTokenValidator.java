@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.crypto.SecretKey;
@@ -19,12 +20,20 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static io.jsonwebtoken.Jwts.*;
-
+@Component
 public class JwtTokenValidator extends OncePerRequestFilter {
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+
+        String requestURI = request.getServletPath();
+
+        // Skip JWT validation for public endpoints
+        if (requestURI.startsWith("/api/auth/signIn") || requestURI.startsWith("/api/auth/signUp")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String jwt = request.getHeader("Authorization");
 
@@ -32,7 +41,7 @@ public class JwtTokenValidator extends OncePerRequestFilter {
             jwt = jwt.substring(7); // Remove "Bearer " prefix
 
             try {
-                SecretKey key = Keys.hmacShaKeyFor(JwtConstant.SECRETE_KEY.getBytes(StandardCharsets.UTF_8));
+                SecretKey key = Keys.hmacShaKeyFor(JwtConstant.SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 
                 Claims claims = Jwts.parserBuilder()
                         .setSigningKey(key)
@@ -43,7 +52,11 @@ public class JwtTokenValidator extends OncePerRequestFilter {
                 String email = claims.getSubject(); // Assumes 'sub' claim holds the email
                 String authorities = String.valueOf(claims.get("authorities"));
 
+                System.out.println("Authorities: "+authorities);
+
                 List<GrantedAuthority> authorityList = AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
+
+                System.out.println("Authorities from token: " + authorityList);  // Log authorities to check correctness
 
                 Authentication auth = new UsernamePasswordAuthenticationToken(
                         email,
@@ -53,10 +66,13 @@ public class JwtTokenValidator extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (Exception e) {
-                throw new RuntimeException("Invalid Token", e);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Invalid or expired token");
+                return;
             }
         }
 
         filterChain.doFilter(request, response);
     }
+
 }
