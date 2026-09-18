@@ -37,8 +37,9 @@ const SigninForm = () => {
   const dispatch=useDispatch();
 
   const onSubmit = (data) => {
-    dispatch(login(data, navigate));
-    // console.log("Sign-In Data:", data);
+    dispatch(login(data));
+    navigate("/")
+    console.log("Sign-In Data:", data);
   };
 
   return (

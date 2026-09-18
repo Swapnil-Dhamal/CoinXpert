@@ -1,5 +1,7 @@
 import axios from "axios";
 import { GET_USER_FAILURE, GET_USER_REQUEST, GET_USER_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT_SUCCESS, REGISTER_FAILURE, REGISTER_REQUEST, REGISTER_SUCCESS } from "./ActionTypes";
+import { useNavigate } from "react-router-dom";
+
 
 export const register=(userData)=>async(dispatch)=>{
 
@@ -32,6 +34,7 @@ export const login = (userData) => async (dispatch) => {
         const user = response.data;
 
         console.log("Login Response:", user); // Debugging line
+        console.log("Navigating")
 
         if (!user.jwt) {
             console.error("JWT is missing in login response!");
@@ -39,10 +42,18 @@ export const login = (userData) => async (dispatch) => {
             return;
         }
 
-        localStorage.setItem("jwt", user.jwt);
-        dispatch({ type: LOGIN_SUCCESS, payload: user.jwt });
-        userData.navigate("/");
 
+
+        localStorage.setItem("jwt", user.jwt);
+        dispatch({
+            type: LOGIN_SUCCESS,
+            payload: {
+                user: user.user, // your user object
+                jwt: user.jwt,   // the JWT
+            },
+        });    
+
+        
     } catch (err) {
         console.error("Login error:", err);
         dispatch({ type: LOGIN_FAILURE, payload: err.message });
@@ -69,7 +80,7 @@ export const getUser = (jwt) => async (dispatch) => {
             },
         });
 
-        console.log("User Profile Data:", response.data);
+        // console.log("User Profile Data:", response.data);
         dispatch({ type: GET_USER_SUCCESS, payload: response.data });
 
     } catch (err) {

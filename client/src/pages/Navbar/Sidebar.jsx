@@ -18,6 +18,7 @@ const menu = [
   { name: "Withdrawal", path: "/withdrawal", icon: <CreditCardIcon className="h-6 w-6" /> },
   { name: "Profile", path: "/profile", icon: <PersonIcon className="h-6 w-6" /> },
   { name: "Logout", path: "/", icon: <ExitIcon className="h-6 w-6" /> },
+  
 ];
 
 const Sidebar = () => {

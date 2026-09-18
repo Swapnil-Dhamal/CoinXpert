@@ -3,23 +3,33 @@ import React, { useState } from "react";
 import Bank from "../images/bank.png";
 import { Button } from "@/components/ui/button";
 import { DialogClose } from "@/components/ui/dialog";
+import { withdrawMoney } from "@/State/Wallet/Action";
+import { useDispatch, useSelector } from "react-redux";
 
 const WithdrawalForm = () => {
   const [amount, setAmount] = useState("");
+  const dispatch = useDispatch();
+  const { wallet } = useSelector((store) => store);
 
   const handleChange = (e) => {
     setAmount(e.target.value);
   };
 
+  const paymentDetails = useSelector(
+      (state) => state.paymentDetails.paymentDetails
+    );
+
   const handleSubmit = () => {
-    console.log(amount);
+    dispatch(withdrawMoney({jwt:localStorage.getItem("jwt"),
+      amount:Number(amount),
+    }))
   };
 
   return (
     <div className="pt-10 space-y-5">
       <div className="flex justify-between items-center rounded-md bg-slate-900 text-xl font-bold px-5 py-4">
         <p>Available balance</p>
-        <p>$4366</p>
+        <p>${wallet?.userWallet?.balance}</p>
       </div>
 
       <div className="flex flex-col items-center">
@@ -43,8 +53,8 @@ const WithdrawalForm = () => {
           <img className="h-8 w-8" src={Bank} alt="" />
 
           <div>
-            <p className="text-xl font-bold ">Yes Bank</p>
-            <p className="text-xs">********3409</p>
+            <p className="text-xl font-bold ">{paymentDetails?.bankName?? "No bank linked"}</p>
+            <p className="text-xs">********{paymentDetails?.accountNumber?.slice(-4)}</p>
           </div>
         </div>
       </div>

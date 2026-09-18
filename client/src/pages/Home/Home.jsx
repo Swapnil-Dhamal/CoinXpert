@@ -4,48 +4,98 @@ import AssetTable from "./AssetTable";
 import StockChart from "./StockChart";
 import { Avatar } from "@radix-ui/react-avatar";
 import { AvatarImage } from "@/components/ui/avatar";
-import { DotIcon, MessageCircle , Send} from "lucide-react";
+import { DotIcon, MessageCircle, Send } from "lucide-react";
 import { Cross1Icon } from "@radix-ui/react-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { getCoinList, getTop50Coins } from "@/State/Coin/Action";
 import { store } from "@/State/Store";
 import { useEffect } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
+// Point this at your Spring Boot backend.
+// Better long-term: put this in a .env file as VITE_API_BASE_URL (Vite) or
+// REACT_APP_API_BASE_URL (CRA) instead of hardcoding it.
+const API_BASE_URL = "http://localhost:5454";
 
 function Home() {
   const [category, setCategory] = React.useState("all");
-  const [inputValue, setInputValue]= React.useState("");
-  const [isBotRealease, setIsBotRealease]=React.useState(false);
-  const dispatch=useDispatch();
-  const {coin}=useSelector(store=>store);
+  const [inputValue, setInputValue] = React.useState("");
+  const [isBotRealease, setIsBotRealease] = React.useState(false);
+  const [messages, setMessages] = React.useState([
+    {
+      role: "bot",
+      text: "Hi! You can ask any crypto-related question — like price, market cap, etc.",
+    },
+  ]);
+  const [isSending, setIsSending] = React.useState(false);
+  const dispatch = useDispatch();
+  const { coin } = useSelector((store) => store);
 
+  const handleBotRealease = () => setIsBotRealease(!isBotRealease);
 
-  const handleBotRealease=()=>setIsBotRealease(!isBotRealease);
-
-  useEffect(()=>{
-
+  useEffect(() => {
     dispatch(getCoinList(1));
-  }, [])
+  }, []);
 
-  useEffect(()=>{
-
-    dispatch(getTop50Coins())
-  }, [category])
+  useEffect(() => {
+    dispatch(getTop50Coins());
+  }, [category]);
 
   const handleCategory = (value) => {
     setCategory(value);
   };
 
-  const handleChange=(e)=>{
+  const handleChange = (e) => {
     setInputValue(e.target.value);
-  }
+  };
 
-  const handleKeyPress=(event)=>{
-    if(event.key=="Enter"){
-      console.log(inputValue);
-      setInputValue("");
+  const sendMessage = async () => {
+    const prompt = inputValue.trim();
+    if (!prompt || isSending) return;
 
+    // Optimistically show the user's message and clear the input
+    setMessages((prev) => [...prev, { role: "user", text: prompt }]);
+    setInputValue("");
+    setIsSending(true);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/ai/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
+      const data = await response.json();
+      // Backend's ApiResponse shape: { message: "..." }
+      const answer = data?.message ?? "Sorry, I didn't get a response.";
+
+      setMessages((prev) => [...prev, { role: "bot", text: answer }]);
+    } catch (error) {
+      console.error("Chatbot request failed:", error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "bot",
+          text: "Something went wrong reaching the server. Please try again.",
+        },
+      ]);
+    } finally {
+      setIsSending(false);
     }
-  }
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      sendMessage();
+    }
+  };
 
   return (
     <div className="relative ">
@@ -84,7 +134,10 @@ function Home() {
               Top Losers
             </Button>
           </div>
-          <AssetTable  coin={category=="all"?coin.coinList : coin.top50} category={category}/>
+          <AssetTable
+            coin={category == "all" ? coin.coinList : coin.top50}
+            category={category}
+          />
         </div>
 
         <div className="hidden lg:block lg:w-[50%] p-5">
@@ -120,79 +173,81 @@ function Home() {
         </div>
       </div>
 
-  <section className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-2 w-[20rem] md:w-[25rem]">
-   { isBotRealease && <div className="flex flex-col rounded-md h-[70vh] bg-slate-900 w-full">
-    
-    {/* Header */}
-    <div className="flex justify-between items-center p-4 border-b border-slate-800">
-      <p className="text-white font-medium">Chat Bot</p>
-      <Button 
-      onClick={handleBotRealease}
-      variant="ghost" size="icon">
-        <Cross1Icon className="h-4 w-4" />
-      </Button>
-    </div>
+      <section className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-2 w-[20rem] md:w-[25rem]">
+        {isBotRealease && (
+          <div className="flex flex-col rounded-md h-[70vh] bg-slate-900 w-full">
+            {/* Header */}
+            <div className="flex justify-between items-center p-4 border-b border-slate-800">
+              <p className="text-white font-medium">Chat Bot</p>
+              <Button onClick={handleBotRealease} variant="ghost" size="icon">
+                <Cross1Icon className="h-4 w-4" />
+              </Button>
+            </div>
 
-    {/* Chat Content */}
-    <div className="flex-1 flex flex-col overflow-y-auto p-5 space-y-4">
-      
-      {/* Bot Message (Left) */}
-      <div className="self-start px-5 py-3 rounded-lg bg-slate-800 max-w-[80%]">
-        <p className="text-white">Hi, Swapnil Dhamal</p>
-        <p className="text-slate-300">You can ask any crypto-related question.</p>
-        <p className="text-slate-300">Like price, market cap, etc.</p>
-      </div>
+            {/* Chat Content */}
+            <div className="flex-1 flex flex-col overflow-y-auto p-5 space-y-4">
+              {messages.map((msg, idx) =>
+                msg.role === "bot" ? (
+                  <div
+                    key={idx}
+                    className="self-start px-5 py-3 rounded-lg bg-slate-800 max-w-[80%] text-slate-300 prose prose-invert prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-headings:my-2"
+                  >
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {msg.text}
+                    </ReactMarkdown>
+                  </div>
+                ) : (
+                  <div
+                    key={idx}
+                    className="self-end px-5 py-3 rounded-lg bg-blue-600 text-white max-w-[80%]"
+                  >
+                    <p>{msg.text}</p>
+                  </div>
+                )
+              )}
 
-      {/* User Prompt (Right) */}
-      <div className="self-end px-5 py-3 rounded-lg bg-blue-600 text-white max-w-[80%]">
-        <p>Prompt: How are you?</p>
-      </div>
+              {isSending && (
+                <div className="self-start px-5 py-3 rounded-lg bg-slate-800 max-w-[80%]">
+                  <p className="text-slate-400 italic">Thinking...</p>
+                </div>
+              )}
+            </div>
 
-      {/* Bot Response (Left) */}
-      <div className="self-start px-5 py-3 rounded-lg bg-slate-800 max-w-[80%]">
-        <p className="text-slate-300">Ans: I am fine!</p>
-      </div>
+            <div className="p-4 border-t border-slate-800">
+              <div className="flex items-center bg-slate-900 rounded-md border border-none">
+                <input
+                  className="w-full h-10 px-4 bg-transparent text-white outline-none"
+                  placeholder="Chat with AI"
+                  onChange={handleChange}
+                  value={inputValue}
+                  onKeyDown={handleKeyPress}
+                  disabled={isSending}
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={sendMessage}
+                  disabled={isSending}
+                >
+                  <Send
+                    className="h-5 w-5 text-white"
+                    style={{ transform: "rotate(45deg)" }}
+                  />
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
 
-    </div>
-
-
-    <div className="p-4 border-t border-slate-800">
-  <div className="flex items-center bg-slate-900 rounded-md border border-none">
-    <input 
-      className="w-full h-10 px-4 bg-transparent text-white outline-none" 
-      placeholder="Chat with AI"
-      onChange={handleChange}
-      value={inputValue}
-      onKeyDown={handleKeyPress} 
-    />
-    <Button 
-      variant="ghost"
-      size="icon"
-      onClick={() => {
-        console.log(inputValue);
-        setInputValue("");
-      }}
-    >
-<Send className="h-5 w-5 text-white" style={{ transform: "rotate(45deg)" }} />
-</Button>
-  </div>
-</div>
-
-
-  </div>}
-
-  {/* Chat Toggle Button */}
-  <Button 
-  onClick={handleBotRealease}
-  className="w-50% h-10 gap-2 items-center">
-    <MessageCircle
-      size={30}
-      className="fill-slate-800 -rotate-90 stroke-none group-hover:fill-slate-900"
-    />
-    <span className="text-xl">Chat</span>
-  </Button>
-</section>
-
+        {/* Chat Toggle Button */}
+        <Button onClick={handleBotRealease} className="w-50% h-10 gap-2 items-center">
+          <MessageCircle
+            size={30}
+            className="fill-slate-800 -rotate-90 stroke-none group-hover:fill-slate-900"
+          />
+          <span className="text-xl">Chat</span>
+        </Button>
+      </section>
     </div>
   );
 }

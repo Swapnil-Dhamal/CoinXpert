@@ -14,6 +14,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DialogClose } from "@/components/ui/dialog";
+import { useDispatch, useSelector } from "react-redux";
+import { addUserPaymentDetails } from "@/State/PaymentDetails/Action";
 
 // Define validation schema using Zod
 const formSchema = z.object({
@@ -24,6 +26,10 @@ const formSchema = z.object({
 });
 
 const PaymentDetailsForm = () => {
+
+  const dispatch=useDispatch();
+
+
   const form = useForm({
     resolver: zodResolver(formSchema), // Apply validation
     defaultValues: {
@@ -35,7 +41,9 @@ const PaymentDetailsForm = () => {
   });
 
   const onSubmit = (data) => {
-    console.log(data);
+    console.log("Paymet details: ", data);
+    const jwt=localStorage.getItem("jwt");
+    dispatch(addUserPaymentDetails(jwt, data));
   };
 
   return (
@@ -103,10 +111,10 @@ const PaymentDetailsForm = () => {
           />
 
           {/* Submit Button */}
-          <DialogClose className="w-full">
-          <Button className="w-full" type="submit">Submit</Button>
+          <Button className="w-full" type="submit">
+            <DialogClose>Submit</DialogClose>
+          </Button>
 
-          </DialogClose>
         </form>
       </Form>
     </div>

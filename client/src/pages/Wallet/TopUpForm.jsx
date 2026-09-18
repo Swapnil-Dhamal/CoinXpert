@@ -7,10 +7,13 @@ import Razorpay from "../../pages/images/razorpay.png";
 import Stripe from "../../pages/images/stripe.png";
 import { Button } from "@/components/ui/button";
 import { DialogClose } from "@/components/ui/dialog";
+import { useDispatch } from "react-redux";
+import { paymentHandler } from "@/State/Wallet/Action";
 
 const TopUpForm = () => {
   const [amount, setAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("RAZORPAY");
+  const dispatch=useDispatch();
 
   const handlePaymentMethod = (value) => {
     setPaymentMethod(value);
@@ -22,6 +25,10 @@ const TopUpForm = () => {
 
   const handlesubmit = () => {
     console.log(amount, paymentMethod);
+    dispatch(paymentHandler({jwt:localStorage.getItem("jwt"),
+      paymentMethod,
+      amount 
+    }))
   };
   return (
     <div className="pt-10 space-y-10">

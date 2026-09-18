@@ -35,7 +35,7 @@ const Profile = () => {
                 {[
                   { label: "Email", value: auth.user?.email },
                   { label: "Full Name", value: auth.user?.fullName },
-                  { label: "Date of Birth", value: "02/12/2004" },
+                  { label: "Date of Birth", value: "12/12/2012" },
                   { label: "Nationality", value: "Indian" },
                 ].map((item, index) => (
                   <div key={index} className="flex">

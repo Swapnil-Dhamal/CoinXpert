@@ -7,7 +7,7 @@ const initialState={
     user:null,
     loading:false,
     error:null,
-    jwt: null,
+    jwt: localStorage.getItem("jwt"),
 }
 
 const authReducer=(state=initialState, action) =>{
@@ -18,9 +18,16 @@ const authReducer=(state=initialState, action) =>{
         case GET_USER_REQUEST:
             return{...state, loading:true, error:null}
 
-        case REGISTER_SUCCESS:
         case LOGIN_SUCCESS:
-            return{...state, loading:false, error:null, jwt:action.payload}
+            return{...state, loading:false, error:null, user:action.payload.user, jwt:action.payload.jwt}
+
+        case REGISTER_SUCCESS:
+            return{
+                ...state,
+                loading:false,
+                error:null,
+                jwt:action.payload,
+            }
 
         case GET_USER_SUCCESS:
         case GET_USER_SUCCESS:

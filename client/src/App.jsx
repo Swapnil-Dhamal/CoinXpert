@@ -23,9 +23,13 @@ export default function App() {
 
   console.log("User in app : ", auth);
 
-  useEffect(()=>{
-    dispatch(getUser(auth.jwt || localStorage.getItem("jwt")))
-  }, [auth.jwt])
+  useEffect(() => {
+  const token = auth.jwt || localStorage.getItem("jwt");
+  if (token && !auth.user) {
+    dispatch(getUser(token));
+  }
+  }, [auth.jwt]);
+
 
   return (
     <>
