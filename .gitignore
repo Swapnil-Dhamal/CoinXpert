@@ -4,6 +4,14 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### JVM crash dumps ###
+hs_err_pid*.log
+replay_pid*.log
+
+### Secrets / local config ###
+.env
+application-local.properties
+
 ### STS ###
 .apt_generated
 .classpath
@@ -31,4 +39,3 @@ build/
 
 ### VS Code ###
 .vscode/
-application.properties

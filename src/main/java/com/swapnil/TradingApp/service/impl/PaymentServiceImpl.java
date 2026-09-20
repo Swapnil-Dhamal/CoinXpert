@@ -28,8 +28,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepo paymentRepo;
 
-    @Value("${stripe.api.key}")
-    private String stripeSecretKey;
+//    @Value("${stripe.api.key}")
+//    private String stripeSecretKey;
 
     @Value(("${razorpay.api.key}"))
     private String apiKey;
@@ -135,7 +135,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentResponse createStripePaymentLink(Users user, Long amount, Long orderId) throws StripeException {
 
-        Stripe.apiKey=stripeSecretKey;
+//        Stripe.apiKey=stripeSecretKey;
 
         SessionCreateParams params=SessionCreateParams.builder()
                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
