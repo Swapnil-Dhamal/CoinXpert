@@ -16,8 +16,7 @@ import remarkGfm from "remark-gfm";
 // Point this at your Spring Boot backend.
 // Better long-term: put this in a .env file as VITE_API_BASE_URL (Vite) or
 // REACT_APP_API_BASE_URL (CRA) instead of hardcoding it.
-const API_BASE_URL = "http://localhost:5454";
-
+const API_BASE_URL = import.meta.env.VITE_CHATBOT_URL || "http://localhost:5454";
 function Home() {
   const [category, setCategory] = React.useState("all");
   const [inputValue, setInputValue] = React.useState("");
